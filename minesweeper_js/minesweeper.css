@@ -1,0 +1,166 @@
+/*html, body {
+    margin: auto;
+    height: 100%;
+}*/
+
+#game_container {
+    max-width: 100%;
+}
+
+button, label, input { margin-right: 1vh; font-size: min(3vw, 2.7vh); }
+button { border-radius: 0.5rem; padding: 0.3rem; }
+#btn_new_game { background-color: greenyellow; }
+#btn_new_game:hover { background-color: #8ae600; }
+#btn_new_game:active { background-color: #ff3300; }
+#btn_debug_mode { background-color: orange; }
+#btn_debug_mode:active { background-color: #ff3300; }
+
+#menu {
+    display: flex;
+    justify-content: center; /*horizontal*/
+    align-items: center; /*vertical*/
+}
+
+#status_panel {
+    display:flex;
+    justify-content: center; /*horizontal*/
+    align-items: center; /*vertical*/
+    margin: 1vh;
+    margin-bottom: 1.5vh;
+}
+
+/* game status, smiley icon */
+#status_icon {
+    width: 10vh;
+    height: 10vh;
+}
+#status_icon {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+#status_icon.playing {
+    background-image: url("images/smiley_playing.png");
+    
+}
+#status_icon.win {
+    background-image: url("images/smiley_win.png");
+}
+#status_icon.lose {
+    background-image: url("images/smiley_lose.png");
+}
+#status_icon.debug {
+    background-image: url("images/smiley_debug.png");
+}
+
+/* game field, game table*/
+#game_board {
+    width: min(80vw, 80vh);
+    height: min(80vw, 80vh);
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+.game_board_row {
+    display: flex;
+    flex: 1;
+    margin-bottom: 0.5vh;
+}
+
+.game_board_row:last-child {
+    margin-bottom: 0;
+}
+
+@font-face {
+    font-family: "minesweeper_font";
+    src: url("minesweeper_font.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+.game_board_cell {
+    background-color: silver;
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    margin-right: 0.5vh;
+
+    font-size: 100%;
+    font-family: "minesweeper_font", sans-serif;
+
+    color: transparent;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: filter 0.5s ease;
+}
+.game_board_cell.debug {
+    color: black;
+}
+
+.game_board_cell:hover {
+    filter: brightness(60%);
+}
+
+.game_board_cell:last-child {
+    margin-right: 0;
+}
+
+.mine.debug {
+    color: white;
+    background-image: url("images/mine.png");
+}
+
+.revealed {
+    background-color: #a6a6a6;
+}
+
+.flagged {
+    background-image: url("images/flag.png");
+}
+
+
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="1"].revealed  {
+    color: red;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="2"].revealed  {
+    color: green;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="3"].revealed  {
+    color: blue;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="4"].revealed  {
+    color: navy;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="5"].revealed  {
+    color: Maroon;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="6"].revealed  {
+    color: purple;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="7"].revealed  {
+    color: orange;
+}
+.game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="8"].revealed  {
+    color: magenta;
+}
+
+/* revealed mine:
+if a cell has .mine and .revealed classes at the same time */
+.mine.revealed {
+    background-image: url("images/mine.png");
+}
+
+.mine.exploded {
+    background-color: #ff3300;
+    background-image: url("images/mine.png");
+}
+
+
+
