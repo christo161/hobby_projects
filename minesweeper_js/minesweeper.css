@@ -12,8 +12,8 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
 #btn_new_game { background-color: greenyellow; }
 #btn_new_game:hover { background-color: #8ae600; }
 #btn_new_game:active { background-color: #ff3300; }
-#btn_debug_mode { background-color: orange; }
-#btn_debug_mode:active { background-color: #ff3300; }
+#btn_test_mode { background-color: orange; }
+#btn_test_mode:active { background-color: #ff3300; }
 
 #menu {
     display: flex;
@@ -49,7 +49,7 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
 #status_icon.lose {
     background-image: url("images/smiley_lose.png");
 }
-#status_icon.debug {
+#status_icon.test_mode {
     background-image: url("images/smiley_debug.png");
 }
 
@@ -100,9 +100,6 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
 
     transition: filter 0.5s ease;
 }
-.game_board_cell.debug {
-    color: black;
-}
 
 .game_board_cell:hover {
     filter: brightness(60%);
@@ -110,11 +107,6 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
 
 .game_board_cell:last-child {
     margin-right: 0;
-}
-
-.mine.debug {
-    color: white;
-    background-image: url("images/mine.png");
 }
 
 .revealed {
@@ -125,6 +117,14 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
     background-image: url("images/flag.png");
 }
 
+.game_board_cell.test_mode {
+    color: black;
+}
+
+.mine.test_mode {
+    color: white;
+    background-image: url("images/mine.png");
+}
 
 .game_board_cell:not(.mine):not(.flagged)[data-neighbour_mine_count="1"].revealed  {
     color: red;

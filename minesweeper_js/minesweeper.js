@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     //global var definitions
-    //appstate: actual 
+    //appstate: actual state of game logic
     let actual_appstate;
 
     //GAME LOGIC
@@ -36,11 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //in JavaScript there are no enums
         //this is something like enum :)
-        static status = {
+        static game_status = {
             PLAYING: 1,
             WIN: 2,
             LOSE: 3,
-            DEBUG: 4
+            TEST_MODE: 4
         }
 
         constructor(p_numof_rows, p_numof_cols, p_numof_mines) {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             this.numof_mines = p_numof_mines;
 
-            this.actual_status = appstate.status.PLAYING;
+            this.actual_status = appstate.game_status.PLAYING;
             
             this.game_board = this.generate_board();
         }
@@ -114,14 +114,14 @@ document.addEventListener("DOMContentLoaded", () => {
             //console.log("First click at", p_coord_i, p_coord_j, "mine?", this.game_board[p_coord_i][p_coord_j].mine);
 
             //debug
-            console.log("First click:", p_coord_i, p_coord_j);
+            /*console.log("First click:", p_coord_i, p_coord_j);
                 for (let i = 0; i < this.numof_rows; i++) {
                 let row = "";
                 for (let j = 0; j < this.numof_cols; j++) {
                     row += this.game_board[i][j].mine ? "💣" : ".";
                 }
                 console.log(row);
-            }
+            }*/
             
         }
 
@@ -142,10 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         reveal(p_coord_i, p_coord_j) {
+            //GUARD CLAUSES
 
-            //if gameover, there won't be 
-            if(!(this.actual_status === appstate.status.PLAYING ||
-                this.actual_status === appstate.status.DEBUG)) {
+            //quit if the actual game status is game over
+            if(!(this.actual_status === appstate.game_status.PLAYING ||
+                this.actual_status === appstate.game_status.TEST_MODE)) {
                 return;
             }
 
@@ -153,11 +154,18 @@ document.addEventListener("DOMContentLoaded", () => {
             if(this.game_board[p_coord_i][p_coord_j].flagged) {
                 return;
             }
+
+            //in test mode mines shouldn't be revealable
+            //why? to be able to go back playing status from test mode in a valid state
+            if (this.actual_status === appstate.game_status.TEST_MODE && this.game_board[p_coord_i][p_coord_j].mine) {
+                return;
+            }
+            //endof GUARD CLAUSES
             
             //reveal this cell
             this.game_board[p_coord_i][p_coord_j].reveal();
             //if this cell is mine, gameover and return (no need for flood fill)
-            if (this.game_board[p_coord_i][p_coord_j].mine && this.actual_status !== appstate.status.DEBUG) {
+            if (this.game_board[p_coord_i][p_coord_j].mine && this.actual_status !== appstate.game_status.TEST_MODE) {
                 this.game_board[p_coord_i][p_coord_j].exploded = true;
                 this.gameover_check();
                 return;
@@ -175,17 +183,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } //endof flood fill
 
-            //no gameover check in debug mode
-            if(this.actual_status === appstate.status.DEBUG) {
+            //no gameover check in test mode
+            if(this.actual_status === appstate.game_status.TEST_MODE) {
                 return;
             }
+
             //gameover check in playing mode
             this.gameover_check();
-
         } //endof reveal
 
         gameover_check = () => {
-            //lose:
+            //lose: a mine cell is revealed
             const is_lose = this.game_board.some(actual_row => actual_row.some(
                 actual_cell => (actual_cell.revealed && actual_cell.mine)
             ));
@@ -195,11 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
             ));
             
             if( is_lose || is_win ) {
-                //reveal all cells
                 
-
                 if (is_win) {
-                    this.actual_status = appstate.status.WIN;
+                    this.actual_status = appstate.game_status.WIN;
                     
                     this.game_board.forEach(actual_row => actual_row.forEach(
                         actual_cell => {
@@ -211,8 +217,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     ));
                 } else if (is_lose) {
-                    this.actual_status = appstate.status.LOSE;
+                    this.actual_status = appstate.game_status.LOSE;
 
+                    //reveal all cells
                     this.game_board.forEach(actual_row => actual_row.forEach(
                         actual_cell => actual_cell.revealed = true
                     ));
@@ -280,15 +287,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const numof_rows = actual_appstate.numof_rows;
         const numof_cols = actual_appstate.numof_cols;
 
-        const document_fragment = document.createDocumentFragment();
+        const document_fragment_dom = document.createDocumentFragment();
 
         for (let i = 0; i < numof_rows; ++i) {
-            let game_board_row_dom = document.createElement("div");
+            const game_board_row_dom = document.createElement("div");
 
             game_board_row_dom.classList.add("game_board_row");
 
             for (let j = 0; j < numof_cols; ++j) {
-                let game_board_cell_dom = document.createElement("div");
+                const game_board_cell_dom = document.createElement("div");
 
                 game_board_cell_dom.classList.add("game_board_cell");
 
@@ -305,8 +312,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (actual_cell.exploded) {
                     game_board_cell_dom.classList.add("exploded");
                 }
-                if (actual_appstate.actual_status === appstate.status.DEBUG) {
-                    game_board_cell_dom.classList.add("debug");
+                if (actual_appstate.actual_status === appstate.game_status.TEST_MODE) {
+                    game_board_cell_dom.classList.add("test_mode");
                 }
 
                 game_board_cell_dom.dataset.neighbour_mine_count = actual_cell.neighbour_mine_count;
@@ -316,10 +323,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 game_board_cell_dom.dataset.coord_j = j;
                 
                 game_board_row_dom.appendChild(game_board_cell_dom);
-            }
-            document_fragment.appendChild(game_board_row_dom);
+            } //endof for
+            document_fragment_dom.appendChild(game_board_row_dom);
         } //endof for
-        game_board_dom.appendChild(document_fragment);
+        game_board_dom.appendChild(document_fragment_dom);
     };
 
     //d win, lose, playing
@@ -329,10 +336,10 @@ document.addEventListener("DOMContentLoaded", () => {
         game_status_icon.classList.forEach(actual_class => game_status_icon.classList.remove(actual_class));
 
         switch (actual_appstate.actual_status) {
-            case appstate.status.PLAYING: game_status_icon.classList.add("playing"); break;
-            case appstate.status.WIN: game_status_icon.classList.add("win"); break;
-            case appstate.status.LOSE: game_status_icon.classList.add("lose"); break;
-            case appstate.status.DEBUG: game_status_icon.classList.add("debug"); break;
+            case appstate.game_status.PLAYING: game_status_icon.classList.add("playing"); break;
+            case appstate.game_status.WIN: game_status_icon.classList.add("win"); break;
+            case appstate.game_status.LOSE: game_status_icon.classList.add("lose"); break;
+            case appstate.game_status.TEST_MODE: game_status_icon.classList.add("test_mode"); break;
         }
     }
 
@@ -343,8 +350,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const coord_j = parseInt(p_cell_div.dataset.coord_j);
         return { coord_i, coord_j };
     }
-
-    
 
     const new_game = () => {
         const board_size_dom = document.querySelector("#board_size");
@@ -371,13 +376,19 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#btn_new_game").addEventListener("click", () =>{
             new_game();
         });
-        //e debug mode BUTTON
-        document.querySelector("#btn_debug_mode").addEventListener("click", () =>{
-            if (actual_appstate.actual_status !== appstate.status.PLAYING) {
+        //e test mode BUTTON
+        document.querySelector("#btn_test_mode").addEventListener("click", () =>{
+            //toggle play/test mode
+            if (actual_appstate.actual_status === appstate.game_status.PLAYING) {
+                actual_appstate.actual_status = appstate.game_status.TEST_MODE;
+            } else if (actual_appstate.actual_status === appstate.game_status.TEST_MODE) {
+                 actual_appstate.actual_status = appstate.game_status.PLAYING;
+                 //in test mode there is no gameover check, so after returning back there should be a gameover test
+                 actual_appstate.gameover_check();
+            } else {
                 return;
             }
-
-            actual_appstate.actual_status = appstate.status.DEBUG;
+            
             render_board();
             render_game_status();
         });
@@ -385,10 +396,18 @@ document.addEventListener("DOMContentLoaded", () => {
         //e board size INPUT
         const board_size_dom = document.querySelector("#board_size");
         board_size_dom.addEventListener("input", () =>{
+            //disallow non-number characters
+            board_size_dom.value = board_size_dom.value.replace("/[^0-9]/g", "");
+        });
+        board_size_dom.addEventListener("change", () =>{
             //board size min/max input validation
             const actual_value = parseInt(board_size_dom.value);
             const min = parseInt(board_size_dom.min);
             const max = parseInt(board_size_dom.max);
+
+            if (board_size_dom.value === "") {
+                board_size_dom.value = min;
+            }
 
             if (board_size_dom.value !== "" && actual_value < min || actual_value > max) {
                 board_size_dom.value = Math.min(Math.max(actual_value, min), max );
@@ -396,9 +415,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             //update mines input field (actual value and max value) when changing the game board size input value
             mines_input_update();
-
-            //disallow non-number characters
-            board_size_dom.value = board_size_dom.value.replace("/[^0-9]/g", "");
         });
         //e number of mines INPUT
         const numberof_mines_dom = document.querySelector("#numberof_mines");
@@ -422,8 +438,8 @@ document.addEventListener("DOMContentLoaded", () => {
         game_board_dom.addEventListener("click", (event) => {
             if (event.target.classList.contains("game_board_cell")) {
 
-                if (!(actual_appstate.actual_status === appstate.status.PLAYING
-                    || actual_appstate.actual_status === appstate.status.DEBUG)) {
+                if (!(actual_appstate.actual_status === appstate.game_status.PLAYING
+                    || actual_appstate.actual_status === appstate.game_status.TEST_MODE)) {
                     return;
                 }
 
@@ -450,7 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!actual_appstate.first_click_happened) {
                     return;
                 }
-                if (actual_appstate.actual_status !== appstate.status.PLAYING) {
+                if (actual_appstate.actual_status !== appstate.game_status.PLAYING) {
                     return;
                 }
 
