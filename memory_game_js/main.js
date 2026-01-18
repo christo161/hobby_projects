@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 color: "#ffcc00",
                 backgroundColor: "#00cc99",
-                fontSize: clamp(2rem, 6vw, 7rem)",
+                fontSize: "clamp(2rem, 6vw, 7rem)",
 
                 padding: "clamp(1rem, 4vw, 3rem)",
 
