@@ -28,6 +28,8 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
     flex-direction: column;
     margin: auto;
 
+    position: relative; /* it is only used for the win message */
+
     /* make game board content not selectable by click, tap or hotkey (ctrl+a) */
     user-select: none;
     -webkit-user-select: none; /* Safari */

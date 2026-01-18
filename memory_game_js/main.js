@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             win_message_settimeout = setTimeout(() => {
-                document.body.appendChild(win_message);
+                document.querySelector("#game_board").appendChild(win_message);
             }, 2000);
             
         }
