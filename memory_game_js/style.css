@@ -1,0 +1,118 @@
+#game_container {
+    max-width: 100%;
+}
+
+button, label, input { margin-right: 1vh; font-size: min(3vw, 2.7vh); }
+button { border-radius: 0.5rem; padding: 0.3rem; }
+#btn_new_game { background-color: greenyellow; }
+#btn_new_game:active { background-color: #ff3300; }
+#btn_new_game:hover { filter: brightness(90%); }
+#btn_test_mode { background-color: orange; }
+#btn_test_mode:active { background-color: #ff3300; }
+#btn_test_mode:hover { filter: brightness(90%); }
+
+#menu {
+    display: flex;
+    justify-content: center; /*horizontal*/
+    align-items: center; /*vertical*/
+
+    margin: 1vh;
+    margin-bottom: 1.5vh;
+}
+
+#game_board {
+    width: min(90vw, 90vh);
+    height: min(90vw, 90vh);
+
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+
+    /* make game board content not selectable by click, tap or hotkey (ctrl+a) */
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* Edge */
+}
+
+.game_board_row {
+    display: flex;
+    flex: 1;
+    margin-bottom: 0.5vh;
+}
+
+.game_board_row:last-child {
+    margin-bottom: 0;
+}
+
+.game_board_cell {
+    background-color: silver;
+    display: flex;
+    flex: 1;
+    aspect-ratio: 1/1;
+
+    justify-content: center; /* horizontal */
+    align-items: center; /* vertical */
+
+    margin-right: 0.5vh;
+
+    transition: filter 0.5s ease;
+    transition: background-color 0.3s ease;
+
+    cursor: pointer;
+}
+
+.game_board_cell:last-child {
+    margin-right: 0;
+}
+
+.game_board_cell:not(.matched, .invalid, .first_revealed, .second_revealed):hover {
+    filter: brightness(80%);
+}
+
+.game_board_cell img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    
+    perspective: 600px;
+
+    transform: rotateY(180deg);
+    transition: 
+        transform 0.4s ease,
+        opacity 0.3s ease;
+
+    backface-visibility: hidden;
+
+    opacity: 0;
+}
+
+.game_board_cell.first_revealed img,
+.game_board_cell.second_revealed img,
+.game_board_cell.matched img {
+    opacity: 1;
+    transform: rotateY(0deg);
+    filter: drop-shadow(0 0 0.02rem black);
+}
+
+.game_board_cell.first_revealed {
+    background-color: #ffb84d;
+}
+
+.game_board_cell.second_revealed {
+    cursor: wait;
+    background-color: #ff3300;
+}
+
+.game_board_cell.matched {
+    background-color: #00cc99;
+}
+
+.game_board_cell.invalid {
+    cursor: not-allowed;
+}
+
+#game_board.test_mode .game_board_cell:not(.first_revealed, .second_revealed, .matched) img {
+    opacity: 0.25;
+    transform: rotateY(0deg);
+}
+
