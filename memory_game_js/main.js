@@ -333,11 +333,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 color: "#ffcc00",
                 backgroundColor: "#00cc99",
-                fontSize: "7rem",
+                fontSize: clamp(2rem, 6vw, 7rem)",
 
-                padding: "3rem",
+                padding: "clamp(1rem, 4vw, 3rem)",
 
-                borderWidth: "2rem",
+                borderWidth: "clamp(0.5rem, 2vw, 2rem)",
                 borderColor: "#ffcc00",
                 borderStyle: "dotted"
 
