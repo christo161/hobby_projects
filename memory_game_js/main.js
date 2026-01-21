@@ -237,7 +237,9 @@ document.addEventListener("DOMContentLoaded", () => {
         game_board_dom.appendChild(document_fragment_dom);
     }
 
+    //global variable for win message
     let win_message_settimeout = null;
+    let win_message_flash_settimeout = null;
 
     function new_game () {
         const board_size_dom = document.querySelector("#board_size");
@@ -260,6 +262,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (win_message_settimeout !== null) {
             clearTimeout(win_message_settimeout);
             win_message_settimeout = null;
+        }
+
+        //the settimeout of win message flashing should be cleared
+        if (win_message_flash_settimeout !== null) {
+            clearTimeout(win_message_flash_settimeout);
+            win_message_flash_settimeout = null;
         }
     }
 
@@ -350,8 +358,31 @@ document.addEventListener("DOMContentLoaded", () => {
             win_message_settimeout = setTimeout(() => {
                 document.querySelector("#game_board").appendChild(win_message);
             }, 2000);
+
+            //flashing effect
+            (function anonym_function() {
+                if (win_message.style.color === "rgb(0, 204, 153)") {
+                    win_message.style.color = "#ffcc00";
+                } else if (win_message.style.color === "rgb(255, 204, 0)") {
+                     win_message.style.color = "#00cc99";
+                }
+
+                if (win_message.style.backgroundColor === "rgb(0, 204, 153)") {
+                    win_message.style.backgroundColor = "#ffcc00";
+                } else if (win_message.style.backgroundColor === "rgb(255, 204, 0)") {
+                    win_message.style.backgroundColor = "#00cc99";
+                }
+
+                if (win_message.style.borderColor === "rgb(0, 204, 153)") {
+                    win_message.style.borderColor = "#ffcc00";
+                } else if (win_message.style.borderColor === "rgb(255, 204, 0)") {
+                    win_message.style.borderColor = "#00cc99";
+                }
+
+                win_message_flash_settimeout = setTimeout( anonym_function, 2000);
+            })();
             
-        }
-    }
+        } //endof win message
+    } //endof update_cell_dom
 
 });
