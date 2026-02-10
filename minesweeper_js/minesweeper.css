@@ -60,6 +60,11 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
     display: flex;
     flex-direction: column;
     margin: auto;
+    
+    /* make game board content not selectable by click, tap or hotkey (ctrl+a) */
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* Edge */
 }
 
 .game_board_row {
@@ -113,8 +118,14 @@ button { border-radius: 0.5rem; padding: 0.3rem; }
     background-color: #a6a6a6;
 }
 
+.game_board_cell:not(.revealed) {
+    cursor: pointer;
+}
+
 .flagged {
     background-image: url("images/flag.png");
+    
+    cursor: context-menu;
 }
 
 .game_board_cell.test_mode {
